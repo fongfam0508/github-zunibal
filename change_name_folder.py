@@ -218,10 +218,10 @@ for i, (label, var) in enumerate([
     ttk.Label(info_frame, text=label).grid(row=i + 1, column=0, sticky="w")
     if i < 2:  # Tỉnh và đại lý là combobox
         combobox = ttk.Combobox(info_frame, textvariable=var,
-                                values=list(TINH_MAPPING.values() if i == 0 else DAI_LY_MAPPING.values()), width=30)
+                                values=list(TINH_MAPPING.values() if i == 0 else DAI_LY_MAPPING.values()), width=34)
         combobox.grid(row=i + 1, column=1, padx=5, pady=5)
     else:  # Các trường khác là entry
-        entry_field = ttk.Entry(info_frame, textvariable=var)
+        entry_field = ttk.Entry(info_frame, textvariable=var, width=37)
         entry_field.grid(row=i + 1, column=1, padx=5, pady=5)
 
 # Frame chứa các nút
@@ -259,11 +259,11 @@ ttk.Button(button_frame, text="Import thư mục", command=browse_folder).grid(r
 ttk.Button(button_frame, text="Đổi tên thư mục", command=rename_folder).grid(row=0, column=1, padx=5, pady=5)
 
 # Create entry for mã niêm phong (make it read-only initially)
-ma_niem_phong_entry = ttk.Entry(info_frame, textvariable=ma_niem_phong_var, state="readonly")
+ma_niem_phong_entry = ttk.Entry(info_frame, textvariable=ma_niem_phong_var, state="readonly", width=37)
 ma_niem_phong_entry.grid(row=5, column=1, padx=5, pady=5)
 
 # Frame chứa ảnh
-image_frame = ttk.Frame(window, padding=10)
+image_frame = ttk.Frame(window, padding=10,)
 image_frame.grid(row=2, column=0, sticky="nsew")
 
 # Biến global để lưu trữ tham chiếu đến ảnh
