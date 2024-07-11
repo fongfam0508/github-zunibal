@@ -78,33 +78,45 @@ def open_image(image_path):
 
 def create_new_folder():
     global new_folder_entry, image_files, image_labels, selected_images
+
     new_folder_name = new_folder_entry.get()
+    if not new_folder_name:  # Kiểm tra nếu tên thư mục trống
+        messagebox.showerror("Lỗi", "Vui lòng nhập tên thư mục mới.")
+        return
 
-    if new_folder_name and selected_images:
-        # Cho phép người dùng chọn vị trí thư mục mới
-        new_folder_path = filedialog.askdirectory(title="Chọn vị trí thư mục mới")
+    if not selected_images:  # Kiểm tra nếu không có ảnh được chọn
+        messagebox.showerror("Lỗi", "Vui lòng chọn ảnh để di chuyển.")
+        return
 
-        if new_folder_path:  # Kiểm tra nếu người dùng đã chọn thư mục
-            new_folder_path = os.path.join(new_folder_path, new_folder_name)
+    new_folder_name = new_folder_entry.get()
+    new_folder_path = filedialog.askdirectory(title="Chọn vị trí thư mục mới")
 
-            try:
-                os.makedirs(new_folder_path, exist_ok=True)
+    # Kiểm tra nếu người dùng đã chọn đường dẫn
+    if new_folder_path:
+        new_folder_path = os.path.join(new_folder_path, new_folder_name)
 
-                # Di chuyển các ảnh đã chọn
-                for index in sorted(selected_images, reverse=True):
-                    image_file = image_files[index]
-                    shutil.move(os.path.join(folder_path, image_file), new_folder_path)
+    new_folder_path = os.path.join(new_folder_path, new_folder_name)
 
-                    # Xóa ảnh khỏi giao diện
-                    image_labels[index][0].destroy()
-                    del image_labels[index]
-                    del image_files[index]
+    try:
+        os.makedirs(new_folder_path, exist_ok=True)  # Tạo thư mục, nếu đã tồn tại thì không báo lỗi
+        for index in sorted(selected_images, reverse=True):
+            image_file = image_files.pop(index)  # Lấy và xóa khỏi danh sách
+            source_path = os.path.join(folder_path, image_file)
+            destination_path = os.path.join(new_folder_path, image_file)
+            shutil.move(source_path, destination_path)
 
-                selected_images = []
-                messagebox.showinfo("Thành công", f"Đã tạo thư mục và di chuyển ảnh vào: {new_folder_name}")
-                new_folder_entry.delete(0, tk.END)
-            except Exception as e:
-                messagebox.showerror("Lỗi", f"Không thể tạo thư mục hoặc di chuyển ảnh: {e}")
+            image_labels[index][0].destroy()
+            del image_labels[index]
+
+        selected_images = []
+        messagebox.showinfo("Thành công", f"Đã tạo thư mục và di chuyển ảnh vào: {new_folder_name}")
+        new_folder_entry.delete(0, tk.END)
+
+        # Refresh lại giao diện sau khi di chuyển
+        browse_folder()
+    except Exception as e:
+        messagebox.showerror("Lỗi", f"Không thể tạo thư mục hoặc di chuyển ảnh: {e}")
+
 
 def update_canvas_scrollregion(event):  # Add event argument here
     canvas.configure(scrollregion=canvas.bbox("all"))
