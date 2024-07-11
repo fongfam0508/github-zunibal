@@ -48,7 +48,7 @@ def update_fields():
         elif cong_no_str == "0":
             cong_no_var.set("No")
         else:
-            cong_no_var.set("")
+            cong_no_var.set("Unknow")
     else:
         # Xóa các trường nếu tên thư mục không hợp lệ
         for var in [tinh_var, dai_ly_var, so_tau_var, ma_thiet_bi_var, ma_niem_phong_var, ngay_var, cong_no_var]:
@@ -83,6 +83,8 @@ def update_folder_name(*args):
         cong_no = "1"
     elif cong_no == "No":
         cong_no = "0"
+    elif cong_no == "Unknow":
+        cong_no = "3"
 
     # Tìm mã tỉnh và mã đại lý từ ánh xạ ngược
     ma_tinh = next((k for k, v in TINH_MAPPING.items() if v == tinh), "")
@@ -167,6 +169,7 @@ def load_mappings(tinh_config_file, dai_ly_config_file):
 
 def show_context_menu(event):
     context_menu = tk.Menu(radio_frame, tearoff=0)
+    context_menu.add_command(label="Unknow", command=lambda: set_cong_no("Unknow"))
     context_menu.add_command(label="Yes", command=lambda: set_cong_no("Yes"))
     context_menu.add_command(label="No", command=lambda: set_cong_no("No"))
     context_menu.post(event.x_root, event.y_root)
@@ -234,6 +237,8 @@ cong_no_var = tk.StringVar(value="")
 
 # Tạo và đặt các Radiobutton cho trường công nợ
 ttk.Label(info_frame, text="Công nợ:").grid(row=7, column=0, sticky="w")
+unknow_radio = ttk.Radiobutton(radio_frame, text="Unknow", variable=cong_no_var, value="Unknow", command=update_folder_name)
+unknow_radio.pack(side="left")
 yes_radio = ttk.Radiobutton(radio_frame, text="Yes", variable=cong_no_var, value="Yes", command=update_folder_name)
 yes_radio.pack(side="left")
 no_radio = ttk.Radiobutton(radio_frame, text="No", variable=cong_no_var, value="No", command=update_folder_name)

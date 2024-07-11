@@ -147,7 +147,12 @@ def create_folder():
     # Rút gọn tên tỉnh và đại lý
     tinh_rut_gon = tinh_thanh_vt.get(tinh, tinh)
     dai_ly_rut_gon = dai_ly_vt.get(daily, daily)
-    cong_no_suffix = "0" if cong_no_var.get() == "No" else "1"
+    if(cong_no_var.get()=="Yes"):
+        cong_no_suffix = "1"
+    elif(cong_no_var.get()=="No"):
+        cong_no_suffix = "0"
+    else:
+        cong_no_suffix = "3"
 
     # Tạo tên thư mục
     folder_name = f"{tinh_rut_gon}.{dai_ly_rut_gon}.{so_tau}.{ma_thiet_bi}.{ma_niem_phong}.{ngay}.{cong_no_suffix}"
@@ -180,6 +185,13 @@ def create_folder():
         update_remaining_seal_codes()
     except Exception as e:
         label_result.config(text=f"Lỗi: {e}")
+
+    # Clear input fields after creating the folder
+    combobox_tinh.set("")
+    combobox_daily.set("")
+    tau_num.delete(0, tk.END)
+    device_code_num.delete(0, tk.END)
+    seal_code_num.delete(0, tk.END)
 
 def update_remaining_seal_codes():
     try:
@@ -230,7 +242,7 @@ def load_data(config_file):
 window = tk.Tk()
 window.title("Tạo folder")
 window.iconbitmap("iconZ.ico")
-cong_no_var = tk.StringVar(value="Yes")
+cong_no_var = tk.StringVar(value="Unknow")
 
 tinh_thanh_vt, dai_ly_vt = load_mappings("ma_tinh_config.txt", "dai_ly_config.txt")
 
@@ -285,7 +297,7 @@ cal.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
 # Thêm phần Công nợ
 label_cong_no = tk.Label(input_frame, text="Công nợ:")
 label_cong_no.grid(row=6, column=0, padx=5, pady=5, sticky="w")
-cong_no_options = ["Yes", "No"]
+cong_no_options = ["Unknow", "Yes", "No"]
 for i, option in enumerate(cong_no_options):
     tk.Radiobutton(input_frame, text=option, variable=cong_no_var, value=option).grid(row=6, column=i+1, sticky="w")
 
