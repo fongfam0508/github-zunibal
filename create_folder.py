@@ -124,6 +124,13 @@ def create_folder():
     ma_niem_phong = seal_code_num.get()
     ngay = cal.get_date().strftime("%d%m%y")
 
+    # Kiểm tra mã niêm phong trong file niêm_phong.txt
+    with open("niem_phong.txt", "r", encoding="utf-8") as f:
+        valid_seal_codes = {line.strip() for line in f}
+    if ma_niem_phong not in valid_seal_codes:
+        messagebox.showerror("Lỗi", "Mã niêm phong không hợp lệ!")
+        return
+
     # Lấy đường dẫn từ ô nhập liệu nếu nó đã được thay đổi
     folder_path = folder_path_entry.get()
 
@@ -163,8 +170,25 @@ def create_folder():
         remove_buttons = []
 
         label_result.config(text="Cục ta cục táccccccc!")
+        # Xóa mã niêm phong đã dùng trong file niêm_phong.txt
+        valid_seal_codes.remove(ma_niem_phong)
+        with open("niem_phong.txt", "w", encoding="utf-8") as f:
+            for code in valid_seal_codes:
+                f.write(code + "\n")
+
+        # Cập nhật hiển thị số mã niêm phong còn lại
+        update_remaining_seal_codes()
     except Exception as e:
         label_result.config(text=f"Lỗi: {e}")
+
+def update_remaining_seal_codes():
+    try:
+        with open("niem_phong.txt", "r", encoding="utf-8") as f:
+            remaining_codes = len(f.readlines())
+        label_remaining_seal_codes.config(text=f"Mã niêm phong còn lại: {remaining_codes}")
+    except FileNotFoundError:
+        label_remaining_seal_codes.config(text="Không tìm thấy file niêm phong.")
+
 
 def update_image_display():
     global image_labels
@@ -201,10 +225,6 @@ def load_data(config_file):
         messagebox.showwarning("Cảnh báo", f"Không tìm thấy tệp tin cấu hình: {config_file}")
 
     return data
-
-
-
-
 
 # --- Giao diện người dùng ---
 window = tk.Tk()
@@ -311,6 +331,13 @@ folder_path_entry.pack(side="left", fill="x", expand=True, padx=5)
 # Nút "Tạo folder"
 button_convert = tk.Button(button_frame, text="Tạo folder", command=create_folder)
 button_convert.pack(side="right", padx=5)
+
+# Thêm label hiển thị số mã niêm phong còn lại
+label_remaining_seal_codes = tk.Label(input_frame, text="")
+label_remaining_seal_codes.grid(row=7, column=0, columnspan=2, padx=5, pady=5)  # Đặt vị trí phù hợp
+
+# Cập nhật ban đầu khi chương trình chạy
+update_remaining_seal_codes()
 
 # Label kết quả
 label_result = tk.Label(window, text="")
