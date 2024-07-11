@@ -14,6 +14,7 @@ image_labels = []
 remove_buttons = []
 CONFIG_FILE = "folder_path_config.txt"
 
+
 def show_image(index):
     webbrowser.open(selected_image_paths[index])
 
@@ -139,9 +140,10 @@ def create_folder():
     # Rút gọn tên tỉnh và đại lý
     tinh_rut_gon = tinh_thanh_vt.get(tinh, tinh)
     dai_ly_rut_gon = dai_ly_vt.get(daily, daily)
+    cong_no_suffix = "0" if cong_no_var.get() == "No" else "1"
 
     # Tạo tên thư mục
-    folder_name = f"{tinh_rut_gon}.{dai_ly_rut_gon}.{so_tau}.{ma_thiet_bi}.{ma_niem_phong}.{ngay}"
+    folder_name = f"{tinh_rut_gon}.{dai_ly_rut_gon}.{so_tau}.{ma_thiet_bi}.{ma_niem_phong}.{ngay}.{cong_no_suffix}"
     full_path = os.path.join(folder_path, folder_name)
 
     try:
@@ -208,6 +210,7 @@ def load_data(config_file):
 window = tk.Tk()
 window.title("Tạo folder")
 window.iconbitmap("iconZ.ico")
+cong_no_var = tk.StringVar(value="Yes")
 
 tinh_thanh_vt, dai_ly_vt = load_mappings("ma_tinh_config.txt", "dai_ly_config.txt")
 
@@ -258,6 +261,15 @@ label_days = tk.Label(input_frame, text="Ngày:")
 label_days.grid(row=5, column=0, padx=5, pady=5, sticky="w")
 cal = DateEntry(input_frame, width=12, bg="darkblue", fg="white")
 cal.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
+
+# Thêm phần Công nợ
+label_cong_no = tk.Label(input_frame, text="Công nợ:")
+label_cong_no.grid(row=6, column=0, padx=5, pady=5, sticky="w")
+cong_no_options = ["Yes", "No"]
+for i, option in enumerate(cong_no_options):
+    tk.Radiobutton(input_frame, text=option, variable=cong_no_var, value=option).grid(row=6, column=i+1, sticky="w")
+
+
 
 # Frame chứa ảnh (di chuyển sang bên phải, cùng hàng với input_frame)
 image_frame = tk.LabelFrame(window, text="Ảnh đính kèm")
